@@ -11,6 +11,7 @@ LABEL "com.github.actions.color"="orange"
 
 COPY Sources action-swiftlint/Sources
 COPY Tests action-swiftlint/Tests
+COPY Scripts action-swiftlint/Scripts
 COPY Package.swift README.md LICENSE action-swiftlint/
 
 RUN apk --no-cache add jq bash curl git git-lfs && \
@@ -18,8 +19,9 @@ RUN apk --no-cache add jq bash curl git git-lfs && \
     swift build --configuration release --static-swift-stdlib && \
     mv `swift build --configuration release --static-swift-stdlib --show-bin-path`/action-swiftlint /usr/bin && \
     cd .. && \
-    rm -rf action-swiftlint
+    rm -rf action-swiftlint && \
+    cd Scripts
 
-ENTRYPOINT ["/usr/bin/action-swiftlint"]
+ENTRYPOINT ["./git-commit.sh"]
 #COPY entrypoint.sh /
 #ENTRYPOINT ["/entrypoint.sh"]
