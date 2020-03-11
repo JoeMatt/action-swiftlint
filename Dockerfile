@@ -9,5 +9,19 @@ LABEL "com.github.actions.description"="A tool to enforce Swift style and conven
 LABEL "com.github.actions.icon"="shield"
 LABEL "com.github.actions.color"="orange"
 
-COPY entrypoint.sh /
-ENTRYPOINT ["/entrypoint.sh"]
+COPY Sources action-swiftlint/Sources
+COPY Tests action-swiftlint/Tests
+COPY Scripts action-swiftlint/Scripts
+COPY Package.swift README.md LICENSE action-swiftlint/
+
+RUN apk --no-cache add jq bash curl git git-lfs && \
+    cd action-swiftlint && \
+    swift build --configuration release --static-swift-stdlib && \
+    mv `swift build --configuration release --static-swift-stdlib --show-bin-path`/action-swiftlint /usr/bin && \
+    cd .. && \
+    rm -rf action-swiftlint && \
+    cd Scripts
+
+ENTRYPOINT ["./git-commit.sh"]
+#COPY entrypoint.sh /
+#ENTRYPOINT ["/entrypoint.sh"]
